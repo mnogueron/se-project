@@ -6,11 +6,6 @@ package jus.poc.prodcons;
 public class Consommateur extends Acteur implements _Consommateur {
 
     @Override
-    public void run() {
-
-    }
-
-    @Override
     public int deviationTempsDeTraitement() {
         return 0;
     }
@@ -25,8 +20,28 @@ public class Consommateur extends Acteur implements _Consommateur {
         return 0;
     }
 
-    @Override
-    public int nombreDeMessages() {
-        return 0;
-    }
+	// constructor
+	protected Consommateur(
+			int type,
+			Observateur observateur,
+			int moyenneTempsDeTraitement,
+			int deviationTempsDeTraitement)
+			throws ControlException {
+		super(type, observateur,
+				moyenneTempsDeTraitement,
+				deviationTempsDeTraitement);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int nombreDeMessages() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
