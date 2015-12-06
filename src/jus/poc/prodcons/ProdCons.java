@@ -18,8 +18,7 @@ public class ProdCons implements Tampon {
 	}
 
 	@Override
-	public void put(_Producteur p,
-			Message m) {
+	public void put(_Producteur p, Message m) {
 		// TODO Auto-generated method stub
 		
 	}
