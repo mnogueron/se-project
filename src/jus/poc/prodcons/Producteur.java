@@ -7,11 +7,7 @@ public class Producteur extends Acteur implements _Acteur, Runnable {
 
 	protected Producteur(int type, Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement)
 			throws ControlException {
-
-		super(type, observateur,
-				moyenneTempsDeTraitement,
-				deviationTempsDeTraitement);
-		// TODO Auto-generated constructor stub
+		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 	}
 
 	@Override
