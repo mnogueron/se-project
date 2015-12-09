@@ -1,24 +1,34 @@
 package jus.poc.prodcons;
 
+import java.util.Random;
+
 /**
  * Created by matthieu on 06/12/15.
  */
-public class Producteur extends Acteur implements _Acteur, Runnable {
+public class Producteur extends Acteur implements _Producteur, Runnable {
 
-	protected Producteur(int type, Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement)
+	private int nbMessages;
+    private ProdCons prodCons;
+
+	protected Producteur(int type, Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement,
+                         ProdCons prodCons, int moyenneNombreDeProduction, int deviationNombreDeProduction)
 			throws ControlException {
 		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
+        this.prodCons = prodCons;
+        do {
+            nbMessages = Aleatoire.valeur(moyenneNombreDeProduction, deviationNombreDeProduction);
+        }while(nbMessages <= 0);
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		while(nombreDeMessages() > 0){
+            prodCons.put(this, new MessageX("Producteur : " + this.toString() + nombreDeMessages()));
+        }
 	}
 
 	@Override
 	public int nombreDeMessages() {
-		// TODO Auto-generated method stub
-		return 0;
+		return nbMessages;
 	}
 }

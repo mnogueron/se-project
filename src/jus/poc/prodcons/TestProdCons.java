@@ -12,6 +12,7 @@ public class TestProdCons extends Simulateur {
 	@Override
 	protected void run() throws Exception {
 		// TODO Auto-generated method stub
+
 	}
 
 	public static void main(String[] args){

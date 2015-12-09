@@ -3,7 +3,7 @@ package jus.poc.prodcons;
 /**
  * Created by matthieu on 06/12/15.
  */
-public class MessageX {
+public class MessageX implements Message {
 
     private String message;
     public MessageX(String message){
