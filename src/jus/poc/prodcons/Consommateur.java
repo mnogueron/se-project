@@ -35,6 +35,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
     	Message m;
     	while(nbMessages > 0){
     		m = prodCons.get(this);
+    		System.out.println("Consumed message: " + m);
     		nbMessages--;
     	}
     }
