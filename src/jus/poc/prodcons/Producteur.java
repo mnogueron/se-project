@@ -23,9 +23,12 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 	@Override
 	public void run() {
 		while(nbMessages > 0){
-            prodCons.put(this, new MessageX("Producteur : " + this.toString() + nombreDeMessages()));
+			MessageX m = new MessageX(Aleatoire.valeur(1000, 2000)+"");
+            prodCons.put(this, m);
+            System.out.println("Added message: "+ m);
             nbMessages--;
         }
+		prodCons.setProductionFinished(this);
 	}
 
 	@Override

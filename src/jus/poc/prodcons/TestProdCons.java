@@ -1,6 +1,7 @@
 package jus.poc.prodcons;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by matthieu on 06/12/15.
@@ -18,16 +19,49 @@ public class TestProdCons extends Simulateur {
     private int deviationNombreMoyenDeProduction;
     private int nombreMoyenNbExemplaire;
     private int deviationNombreMoyenNbExemplaire;
+    
+    private ArrayList<Consommateur> consommateurs; 
+    private ArrayList<Producteur> producteurs; 
+    
+    private ProdCons prodCons;
 
 	public TestProdCons(Observateur observateur) {
 		super(observateur);
         init("options.xml");
+        prodCons = new ProdCons(65000, nbProd);
+        consommateurs = new ArrayList<>();
+        producteurs = new ArrayList<>();
+        
+        for(int i = 0; i<nbCons; i++){
+        	try {
+				consommateurs.add(new Consommateur(Acteur.typeConsommateur, observateur,
+						tempsMoyenConsommation, deviationTempsMoyenConsommation, prodCons,
+						nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire));
+			} catch (ControlException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        for(int i = 0; i<nbProd; i++){
+        	try {
+				producteurs.add(new Producteur(Acteur.typeProducteur, observateur,
+						tempsMoyenProduction, deviationTempsMoyenProduction, prodCons,
+						nombreMoyenDeProduction, deviationNombreMoyenDeProduction));
+			} catch (ControlException e) {
+				e.printStackTrace();
+			}
+        }
 	}
 
 	@Override
 	protected void run() throws Exception {
-		// TODO Auto-generated method stub
-
+		// TODO Auto-generated method stub		
+		for(Producteur p : producteurs){
+			p.start();
+		}
+		for(Consommateur c : consommateurs){
+			c.start();
+		}
 	}
 
     public void init(String file){
@@ -46,7 +80,7 @@ public class TestProdCons extends Simulateur {
             }
         }
 
-        Properties options = new Properties("jus/poc/prodcons/options"+file);
+        Properties options = new Properties("jus/poc/prodcons/options/"+file);
         nbProd = options.get("nbProd");
         nbCons = options.get("nbCons");
         nbBuffer = options.get("nbBuffer");

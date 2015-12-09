@@ -33,9 +33,11 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
     @Override
     public void run() {
     	Message m;
-    	while(nbMessages > 0){
+    	while(nbMessages > 0 && !prodCons.productionIsFinished()){
     		m = prodCons.get(this);
-    		System.out.println("Consumed message: " + m);
+    		if(m != null){
+    			System.out.println("Consumed message: " + m);
+    		}
     		nbMessages--;
     	}
     }
