@@ -8,6 +8,7 @@ import java.util.Random;
 public class Producteur extends Acteur implements _Producteur, Runnable {
 
 	private int nbMessages;
+    private int nbMessagesToAdd;
     private ProdCons prodCons;
 
 	protected Producteur(int type, Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement,
@@ -15,20 +16,20 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 			throws ControlException {
 		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
         this.prodCons = prodCons;
-        do {
-            nbMessages = Aleatoire.valeur(moyenneNombreDeProduction, deviationNombreDeProduction);
-        }while(nbMessages <= 0);
+        nbMessages = Aleatoire.valeur(moyenneNombreDeProduction, deviationNombreDeProduction);
+        nbMessagesToAdd = nbMessages;
 	}
 
 	@Override
 	public void run() {
-		while(nombreDeMessages() > 0){
+		while(nbMessages > 0){
             prodCons.put(this, new MessageX("Producteur : " + this.toString() + nombreDeMessages()));
+            nbMessages--;
         }
 	}
 
 	@Override
 	public int nombreDeMessages() {
-		return nbMessages;
+		return nbMessagesToAdd;
 	}
 }

@@ -6,7 +6,6 @@ package jus.poc.prodcons;
 public class ProdCons implements Tampon {
 	
 	private Message[] buffer;
-	private int nbBusy;
 	private int in;
 	private int out ;
 	
@@ -15,7 +14,6 @@ public class ProdCons implements Tampon {
 	 * @param bufferSize
 	 */
 	public ProdCons(int bufferSize) {
-		nbBusy = 0;
 		in = 0;
 		out = 0;
 		buffer = new Message[bufferSize];
@@ -26,6 +24,7 @@ public class ProdCons implements Tampon {
 
 	@Override
 	public int enAttente() {
+		int nbBusy = 0;
 		for(int i=0; i<taille(); i++){
 			if (buffer[i] != null){
 				nbBusy++;
@@ -36,15 +35,15 @@ public class ProdCons implements Tampon {
 
 	@Override
 	public Message get(_Consommateur c) {
-		while(nbBusy <= 0){
+		while(enAttente() <= 0){
 			try {
 				c.wait();
 			} catch (InterruptedException e) {}
 		}
 		
 		Message m = buffer[out];
+		buffer[out] = null;
 		out = (out-1)%taille();
-		nbBusy--;
 		notify();
 			
 		return m;
@@ -52,7 +51,7 @@ public class ProdCons implements Tampon {
 
 	@Override
 	public void put(_Producteur p, Message m) {
-		while(nbBusy >= taille()){
+		while(enAttente() >= taille()){
 			try {
 				p.wait();
 			} catch (InterruptedException e) {}
@@ -60,7 +59,6 @@ public class ProdCons implements Tampon {
 		
 		buffer[in] = m;
 		in = (in+1)%taille();
-		nbBusy++;
 		notify();
 	}
 
