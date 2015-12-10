@@ -1,13 +1,11 @@
 package jus.poc.prodcons.v1;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
-import sun.org.mozilla.javascript.Synchronizer;
 
 /**
  * Created by matthieu on 06/12/15.
@@ -74,7 +72,7 @@ public class ProdCons implements Tampon {
 		Message m = buffer[out];
 		buffer[out] = null;
 		out = (out+1)%taille();
-		System.out.println("Consumed message: " + m);
+		System.out.println("Consommateur ["+c.identification()+"] consumes: \t\t" + m);
 		notifyAll();
 			
 		return m;
@@ -91,7 +89,7 @@ public class ProdCons implements Tampon {
 		
 		buffer[in] = m;
 		in = (in+1)%taille();
-		System.out.println("Added message: "+ m);
+		System.out.println("Producteur ["+p.identification()+"] produces: \t\t"+ m);
 		notifyAll();
 	}
 

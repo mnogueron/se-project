@@ -29,6 +29,11 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 	@Override
 	public void run() {
 		while(nbMessages > 0){
+			try {
+				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement)*100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			MessageX m = new MessageX(Aleatoire.valeur(1000, 2000)+"");
             prodCons.put(this, m);
             nbMessages--;

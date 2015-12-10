@@ -43,6 +43,11 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
     	while(nbMessages > 0 || !prodCons.productionIsFinished()){
     		m = prodCons.get(this);
     		nbMessages--;
+			try {
+				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement)*100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
     	}
     }
 
