@@ -1,4 +1,4 @@
-package jus.poc.prodcons;
+package jus.poc.prodcons.v1;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package jus.poc.prodcons;
+package jus.poc.prodcons.v1;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +29,8 @@ public class TestProdCons extends Simulateur {
     private ArrayList<Producteur> producteurs; 
     
     private ProdCons prodCons;
+    private int typeConsommateur = 2;
+    private int typeProducteur = 2;
 
 	public TestProdCons(Observateur observateur) {
 		super(observateur);
@@ -39,7 +41,7 @@ public class TestProdCons extends Simulateur {
         
         for(int i = 0; i<nbCons; i++){
         	try {
-				consommateurs.add(new Consommateur(Acteur.typeConsommateur, observateur,
+				consommateurs.add(new Consommateur(typeConsommateur, observateur,
 						tempsMoyenConsommation, deviationTempsMoyenConsommation, prodCons,
 						nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire));
 			} catch (ControlException e) {
@@ -49,7 +51,7 @@ public class TestProdCons extends Simulateur {
         
         for(int i = 0; i<nbProd; i++){
         	try {
-				producteurs.add(new Producteur(Acteur.typeProducteur, observateur,
+				producteurs.add(new Producteur(typeProducteur, observateur,
 						tempsMoyenProduction, deviationTempsMoyenProduction, prodCons,
 						nombreMoyenDeProduction, deviationNombreMoyenDeProduction));
 			} catch (ControlException e) {

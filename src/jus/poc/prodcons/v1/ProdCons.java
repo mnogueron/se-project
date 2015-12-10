@@ -1,4 +1,4 @@
-package jus.poc.prodcons;
+package jus.poc.prodcons.v1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +36,11 @@ public class ProdCons implements Tampon {
 		}
 	}
 	
-	public void setProductionFinished(Producteur p){
+	public synchronized void setProductionFinished(Producteur p){
 		prodFinished.add(p);
+		if(prodFinished.size() == nbProd){
+			notifyAll();
+		}
 	}
 	
 	public boolean productionIsFinished(){
