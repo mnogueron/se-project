@@ -3,6 +3,11 @@ package jus.poc.prodcons;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import jus.poc.prodcons.Acteur;
+import jus.poc.prodcons.ControlException;
+import jus.poc.prodcons.Observateur;
+import jus.poc.prodcons.Simulateur;
+
 /**
  * Created by matthieu on 06/12/15.
  */

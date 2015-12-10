@@ -2,6 +2,12 @@ package jus.poc.prodcons;
 
 import java.util.Random;
 
+import jus.poc.prodcons.Acteur;
+import jus.poc.prodcons.Aleatoire;
+import jus.poc.prodcons.ControlException;
+import jus.poc.prodcons.Observateur;
+import jus.poc.prodcons._Producteur;
+
 /**
  * Created by matthieu on 06/12/15.
  */
@@ -25,7 +31,6 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 		while(nbMessages > 0){
 			MessageX m = new MessageX(Aleatoire.valeur(1000, 2000)+"");
             prodCons.put(this, m);
-            System.out.println("Added message: "+ m);
             nbMessages--;
         }
 		prodCons.setProductionFinished(this);

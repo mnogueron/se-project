@@ -1,5 +1,12 @@
 package jus.poc.prodcons;
 
+import jus.poc.prodcons.Acteur;
+import jus.poc.prodcons.Aleatoire;
+import jus.poc.prodcons.ControlException;
+import jus.poc.prodcons.Message;
+import jus.poc.prodcons.Observateur;
+import jus.poc.prodcons._Consommateur;
+
 /**
  * Created by matthieu on 06/12/15.
  */
@@ -33,11 +40,8 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
     @Override
     public void run() {
     	Message m;
-    	while(nbMessages > 0 && !prodCons.productionIsFinished()){
+    	while(nbMessages > 0 || !prodCons.productionIsFinished()){
     		m = prodCons.get(this);
-    		if(m != null){
-    			System.out.println("Consumed message: " + m);
-    		}
     		nbMessages--;
     	}
     }

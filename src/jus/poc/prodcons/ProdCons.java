@@ -3,6 +3,10 @@ package jus.poc.prodcons;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import jus.poc.prodcons.Message;
+import jus.poc.prodcons.Tampon;
+import jus.poc.prodcons._Consommateur;
+import jus.poc.prodcons._Producteur;
 import sun.org.mozilla.javascript.Synchronizer;
 
 /**
@@ -59,7 +63,6 @@ public class ProdCons implements Tampon {
 			}
 			
 			try {
-				//c.wait();
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();}
@@ -68,6 +71,7 @@ public class ProdCons implements Tampon {
 		Message m = buffer[out];
 		buffer[out] = null;
 		out = (out+1)%taille();
+		System.out.println("Consumed message: " + m);
 		notifyAll();
 			
 		return m;
@@ -77,7 +81,6 @@ public class ProdCons implements Tampon {
 	public synchronized void put(_Producteur p, Message m) {
 		while(enAttente() >= taille()){
 			try {
-				//p.wait();
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();}
@@ -85,6 +88,7 @@ public class ProdCons implements Tampon {
 		
 		buffer[in] = m;
 		in = (in+1)%taille();
+		System.out.println("Added message: "+ m);
 		notifyAll();
 	}
 

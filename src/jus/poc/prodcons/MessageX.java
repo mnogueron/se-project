@@ -1,5 +1,7 @@
 package jus.poc.prodcons;
 
+import jus.poc.prodcons.Message;
+
 /**
  * Created by matthieu on 06/12/15.
  */
