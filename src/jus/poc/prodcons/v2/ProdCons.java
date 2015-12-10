@@ -1,17 +1,26 @@
 package jus.poc.prodcons.v2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
 
+import java.util.ArrayList;
+
 /**
  * Created by matthieu on 06/12/15.
  */
 public class ProdCons implements Tampon {
+
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_BLACK = "\u001B[30m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001B[34m";
+	public static final String ANSI_PURPLE = "\u001B[35m";
+	public static final String ANSI_CYAN = "\u001B[36m";
+	public static final String ANSI_WHITE = "\u001B[37m";
 	
 	private Message[] buffer;
 	private int in;
@@ -19,6 +28,8 @@ public class ProdCons implements Tampon {
 	
 	private int nbProd;
 	private ArrayList<Producteur> prodFinished;
+
+	private File fp, fc;
 	
 	/**
 	 * ProdCons constructor 
@@ -33,13 +44,12 @@ public class ProdCons implements Tampon {
 		for(int i=0; i<taille(); i++){
 			buffer[i] = null;
 		}
+		fp = new File(taille());
+		fc = new File(enAttente());
 	}
 	
-	public synchronized void setProductionFinished(Producteur p){
+	public void setProductionFinished(Producteur p){
 		prodFinished.add(p);
-		if(prodFinished.size() == nbProd){
-			notifyAll();
-		}
 	}
 	
 	public boolean productionIsFinished(){
@@ -58,44 +68,64 @@ public class ProdCons implements Tampon {
 	}
 
 	@Override
-	public synchronized Message get(_Consommateur c) {
-		while(enAttente() <= 0){
-			if(productionIsFinished()){
-				return null;
-			}
-			
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();}
+	public Message get(_Consommateur c) throws InterruptedException {
+		if(productionIsFinished()){
+			return null;
 		}
-		
-		Message m = buffer[out];
-		buffer[out] = null;
-		out = (out+1)%taille();
-		System.out.println("Consommateur ["+c.identification()+"] consumes: \t\t" + m);
-		notifyAll();
+		fc.attendre();
+
+		Message m;
+		synchronized (this){
+			m = buffer[out];
+			buffer[out] = null;
+			out = (out+1)%taille();
+			System.out.println(ANSI_YELLOW + "Consommateur \t["+c.identification()+"] \tconsumes: \t\t"
+					+ ((m==null)?ANSI_RED:"")+ m + ANSI_RESET);
+		}
+
+		fp.reveiller();
 			
 		return m;
 	}
 
 	@Override
-	public synchronized void put(_Producteur p, Message m) {
-		while(enAttente() >= taille()){
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();}
+	public void put(_Producteur p, Message m) throws InterruptedException {
+		fp.attendre();
+
+		synchronized (this) {
+			buffer[in] = m;
+			in = (in + 1) % taille();
+			System.out.println(ANSI_BLUE + "Producteur \t\t[" + p.identification() + "] \tproduces: \t\t" + m + ANSI_RESET);
 		}
-		
-		buffer[in] = m;
-		in = (in+1)%taille();
-		System.out.println("Producteur ["+p.identification()+"] produces: \t\t"+ m);
-		notifyAll();
+
+		fc.reveiller();
 	}
 
 	@Override
 	public int taille() {
 		return buffer.length;
+	}
+
+	private class File{
+
+		private int residu;
+
+		public File(int residu){
+			this.residu = residu;
+		}
+
+		public synchronized void attendre() throws InterruptedException {
+			while(residu == 0){
+				if(ProdCons.this.productionIsFinished()){
+					return;
+				}
+				wait();
+			}
+			residu--;
+		}
+		public synchronized void reveiller() throws InterruptedException {
+			residu++;
+			notify();
+		}
 	}
 }

@@ -35,8 +35,12 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 				e.printStackTrace();
 			}
 			MessageX m = new MessageX(Aleatoire.valeur(1000, 2000)+"");
-            prodCons.put(this, m);
-            nbMessages--;
+			try {
+				prodCons.put(this, m);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			nbMessages--;
         }
 		prodCons.setProductionFinished(this);
 	}

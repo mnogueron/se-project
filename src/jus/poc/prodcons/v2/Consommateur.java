@@ -41,8 +41,12 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
     public void run() {
     	Message m;
     	while(nbMessages > 0 || !prodCons.productionIsFinished()){
-    		m = prodCons.get(this);
-    		nbMessages--;
+			try {
+				m = prodCons.get(this);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			nbMessages--;
 			try {
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement)*100);
 			} catch (InterruptedException e) {
