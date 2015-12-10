@@ -35,7 +35,7 @@ public class TestProdCons extends Simulateur {
 	public TestProdCons(Observateur observateur) {
 		super(observateur);
         init("options.xml");
-        prodCons = new ProdCons(65000, nbProd);
+        prodCons = new ProdCons(nbBuffer, nbProd);
         consommateurs = new ArrayList<>();
         producteurs = new ArrayList<>();
         
