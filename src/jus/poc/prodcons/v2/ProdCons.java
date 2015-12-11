@@ -6,11 +6,15 @@ import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by matthieu on 06/12/15.
  */
 public class ProdCons implements Tampon {
+	
+	private Logger logger = Logger.getLogger(ProdCons.class.getName());
 
 	public static final String ANSI_RESET = "\u001B[0m";
 	public static final String ANSI_BLACK = "\u001B[30m";
@@ -79,7 +83,7 @@ public class ProdCons implements Tampon {
 			m = buffer[out];
 			buffer[out] = null;
 			out = (out+1)%taille();
-			System.out.println(ANSI_YELLOW + "Consommateur \t["+c.identification()+"] \tconsumes: \t\t"
+			logger.info(ANSI_YELLOW + "Consommateur \t["+c.identification()+"] \tconsumes: \t\t"
 					+ ((m==null)?ANSI_RED:"")+ m + ANSI_RESET);
 		}
 
@@ -95,7 +99,7 @@ public class ProdCons implements Tampon {
 		synchronized (this) {
 			buffer[in] = m;
 			in = (in + 1) % taille();
-			System.out.println(ANSI_BLUE + "Producteur \t\t[" + p.identification() + "] \tproduces: \t\t" + m + ANSI_RESET);
+			logger.info(ANSI_BLUE + "Producteur \t\t[" + p.identification() + "] \tproduces: \t\t" + m + ANSI_RESET);
 		}
 
 		fc.reveiller();
