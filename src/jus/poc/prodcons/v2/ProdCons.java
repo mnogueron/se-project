@@ -73,7 +73,7 @@ public class ProdCons implements Tampon {
 
 	@Override
 	public Message get(_Consommateur c) throws InterruptedException {
-		if(productionIsFinished()){
+		if (productionIsFinished()) {
 			return null;
 		}
 		fc.attendre();
@@ -121,7 +121,8 @@ public class ProdCons implements Tampon {
 		public synchronized void attendre() throws InterruptedException {
 			while(residu == 0){
 				if(ProdCons.this.productionIsFinished()){
-					return;
+                    notify();
+					break;
 				}
 				wait();
 			}
@@ -129,7 +130,7 @@ public class ProdCons implements Tampon {
 		}
 		public synchronized void reveiller() throws InterruptedException {
 			residu++;
-			notify();
+			notifyAll();
 		}
 	}
 }

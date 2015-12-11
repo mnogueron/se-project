@@ -40,7 +40,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
     @Override
     public void run() {
     	Message m;
-    	while(nbMessages > 0 || !prodCons.productionIsFinished()){
+    	while(prodCons.enAttente() > 0 || !prodCons.productionIsFinished()){
 			try {
 				m = prodCons.get(this);
 			} catch (InterruptedException e) {
@@ -53,6 +53,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 				e.printStackTrace();
 			}
     	}
+		System.out.println("OUT ["+identification()+"]");
     }
 
     // number of messages already processed by the Consommateur
