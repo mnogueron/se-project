@@ -40,7 +40,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
     @Override
     public void run() {
     	Message m;
-    	while(prodCons.enAttente() > 0 || !prodCons.productionIsFinished()){
+    	while(nbMessages > 0 && !prodCons.productionIsFinished()){
 			try {
 				m = prodCons.get(this);
 			} catch (InterruptedException e) {

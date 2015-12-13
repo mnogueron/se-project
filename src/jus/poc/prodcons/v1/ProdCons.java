@@ -59,7 +59,7 @@ public class ProdCons implements Tampon {
 	@Override
 	public synchronized Message get(_Consommateur c) {
 		while(enAttente() <= 0){
-			if(productionIsFinished()){
+			if(productionIsFinished() && enAttente() == 0){
 				return null;
 			}
 			

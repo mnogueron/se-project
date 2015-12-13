@@ -15,16 +15,6 @@ import java.util.logging.Logger;
 public class ProdCons implements Tampon {
 	
 	private Logger logger = Logger.getLogger(ProdCons.class.getName());
-
-	public static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_BLACK = "\u001B[30m";
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_GREEN = "\u001B[32m";
-	public static final String ANSI_YELLOW = "\u001B[33m";
-	public static final String ANSI_BLUE = "\u001B[34m";
-	public static final String ANSI_PURPLE = "\u001B[35m";
-	public static final String ANSI_CYAN = "\u001B[36m";
-	public static final String ANSI_WHITE = "\u001B[37m";
 	
 	private Message[] buffer;
 	private int in;
@@ -42,6 +32,7 @@ public class ProdCons implements Tampon {
 	public ProdCons(int bufferSize, int nbProd) {
 		in = 0;
 		out = 0;
+        logger.setLevel(Level.INFO);
 		prodFinished = new ArrayList<>();
 		this.nbProd = nbProd;
 		buffer = new Message[bufferSize];
@@ -52,16 +43,16 @@ public class ProdCons implements Tampon {
 		fc = new File(enAttente());
 	}
 	
-	public void setProductionFinished(Producteur p){
+	public synchronized void setProductionFinished(Producteur p){
 		prodFinished.add(p);
 	}
 	
-	public boolean productionIsFinished(){
+	public synchronized boolean productionIsFinished(){
 		return prodFinished.size() == nbProd;
 	}
 
 	@Override
-	public int enAttente() {
+	public synchronized int enAttente() {
 		int nbBusy = 0;
 		for(int i=0; i<taille(); i++){
 			if (buffer[i] != null){
@@ -73,18 +64,17 @@ public class ProdCons implements Tampon {
 
 	@Override
 	public Message get(_Consommateur c) throws InterruptedException {
-		if (productionIsFinished()) {
-			return null;
-		}
 		fc.attendre();
+        if (productionIsFinished() && enAttente() == 0) {
+            return null;
+        }
 
 		Message m;
 		synchronized (this){
 			m = buffer[out];
 			buffer[out] = null;
 			out = (out+1)%taille();
-			logger.info(ANSI_YELLOW + "Consommateur \t["+c.identification()+"] \tconsumes: \t\t"
-					+ ((m==null)?ANSI_RED:"")+ m + ANSI_RESET);
+			logger.info("Consommateur \t["+c.identification()+"] \tconsumes: \t\t"+ m);
 		}
 
 		fp.reveiller();
@@ -99,7 +89,7 @@ public class ProdCons implements Tampon {
 		synchronized (this) {
 			buffer[in] = m;
 			in = (in + 1) % taille();
-			logger.info(ANSI_BLUE + "Producteur \t\t[" + p.identification() + "] \tproduces: \t\t" + m + ANSI_RESET);
+			logger.info("Producteur \t\t[" + p.identification() + "] \tproduces: \t\t" + m);
 		}
 
 		fc.reveiller();
@@ -120,9 +110,9 @@ public class ProdCons implements Tampon {
 
 		public synchronized void attendre() throws InterruptedException {
 			while(residu == 0){
-				if(ProdCons.this.productionIsFinished()){
+				if(ProdCons.this.productionIsFinished() && ProdCons.this.enAttente() == 0){
                     notify();
-					break;
+					return;
 				}
 				wait();
 			}
