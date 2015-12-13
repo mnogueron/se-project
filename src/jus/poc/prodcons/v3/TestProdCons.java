@@ -1,4 +1,4 @@
-package jus.poc.prodcons.v1;
+package jus.poc.prodcons.v3;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,11 +39,28 @@ public class TestProdCons extends Simulateur {
         consommateurs = new ArrayList<>();
         producteurs = new ArrayList<>();
         
+        /* 
+         * added init(int nbProducteurs, int nbConsommateurs, int nbBuffers)
+         * for objective 3 
+        */
+        try {
+			observateur.init(nbProd, nbCons, nbBuffer);
+		} catch (ControlException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
         for(int i = 0; i<nbCons; i++){
         	try {
-				consommateurs.add(new Consommateur(typeConsommateur, observateur,
+        		Consommateur c = new Consommateur(typeConsommateur, observateur,
 						tempsMoyenConsommation, deviationTempsMoyenConsommation, prodCons,
-						nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire));
+						nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire);
+				consommateurs.add(c);
+				/*
+				 * added newConsommateur(Consommateur C)
+				 * for objective 3
+				 */
+				observateur.newConsommateur(c);
 			} catch (ControlException e) {
 				e.printStackTrace();
 			}
@@ -51,9 +68,15 @@ public class TestProdCons extends Simulateur {
         
         for(int i = 0; i<nbProd; i++){
         	try {
-				producteurs.add(new Producteur(typeProducteur, observateur,
+        		Producteur p = new Producteur(typeProducteur, observateur,
 						tempsMoyenProduction, deviationTempsMoyenProduction, prodCons,
-						nombreMoyenDeProduction, deviationNombreMoyenDeProduction));
+						nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
+				producteurs.add(p);
+				/*
+				 * added newProducteur(Producteur P)
+				 * for objective 3
+				 */
+				observateur.newProducteur(p);
 			} catch (ControlException e) {
 				e.printStackTrace();
 			}

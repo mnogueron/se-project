@@ -30,7 +30,7 @@ public class TestProdCons extends Simulateur {
     
     private ProdCons prodCons;
     private int typeConsommateur = 2;
-    private int typeProducteur = 2;
+    private int typeProducteur = 1;
 
 	public TestProdCons(Observateur observateur) {
 		super(observateur);
