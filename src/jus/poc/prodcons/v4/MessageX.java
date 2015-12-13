@@ -8,8 +8,23 @@ import jus.poc.prodcons.Message;
 public class MessageX implements Message {
 
     private String message;
-    public MessageX(String message){
+    private int nbExemplaire;
+
+    public MessageX(String message, int nbExemplaire){
         this.message = message;
+        this.nbExemplaire = nbExemplaire;
+    }
+
+    public int getNbExemplaire(){
+        return this.nbExemplaire;
+    }
+
+    public void removeExemplaire(int toRemove) {
+        this.nbExemplaire -= toRemove;
+    }
+
+    public boolean isEmpty(){
+        return nbExemplaire <= 0;
     }
 
     public String toString(){

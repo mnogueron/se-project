@@ -8,6 +8,8 @@ import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +20,7 @@ public class ProdCons implements Tampon {
 	
 	private Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
 	
-	private Message[] buffer;
+	private MessageX[] buffer;
 	private int in;
 	private int out;
 	
@@ -27,7 +29,7 @@ public class ProdCons implements Tampon {
 
 	private File fp, fc;
 	private Observateur observateur;
-	
+
 	/**
 	 * ProdCons constructor 
 	 * @param bufferSize
@@ -39,7 +41,7 @@ public class ProdCons implements Tampon {
         LOGGER.setLevel(Level.INFO);
 		prodFinished = new ArrayList<>();
 		this.nbProd = nbProd;
-		buffer = new Message[bufferSize];
+		buffer = new MessageX[bufferSize];
 		for(int i=0; i<taille(); i++){
 			buffer[i] = null;
 		}
@@ -68,49 +70,51 @@ public class ProdCons implements Tampon {
 
 	@Override
 	public Message get(_Consommateur c) throws InterruptedException, ControlException {
-		fc.attendre();
+		fc.attendre(1);
+
         if (productionIsFinished()) {
             return null;
         }
 
-		Message m;
+		MessageX m;
 		synchronized (this){
 			m = buffer[out];
-			
-			/*
-			 * add retraitMessage(Consommateur C, Message M)
-			 * for objective 3
-			 */
-			observateur.retraitMessage(c, m);
-			
-			buffer[out] = null;
-			out = (out+1)%taille();
+            m.removeExemplaire(1);
+
+			if(m.isEmpty()) {
+				observateur.retraitMessage(c, m);
+
+				buffer[out] = null;
+				out = (out + 1) % taille();
+
+                fc.removeBlocked(m);
+                fp.removeBlocked(m);
+			}
+            else{
+                fc.addBlocked(m, Thread.currentThread().getId());
+            }
+
 			LOGGER.info("[" + c.identification() + "] \tconsumes: \t\t" + m);
 		}
 
-		fp.reveiller();
-			
-		return m;
+        fp.reveiller(1);
+        return m;
 	}
 
 	@Override
 	public void put(_Producteur p, Message m) throws InterruptedException, ControlException {
-		fp.attendre();
+		fp.attendre(((MessageX)m).getNbExemplaire());
 
 		synchronized (this) {
-			buffer[in] = m;
-			
-			/*
-			 * add depotMessage(Producteur P, Message M)
-			 * for objective 3 
-			 */
+			buffer[in] = (MessageX)m;
 			observateur.depotMessage(p, m);
 			
 			in = (in + 1) % taille();
-			LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m);
+            LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m + "   \t[" + ((MessageX) m).getNbExemplaire() + "]");
+            fp.addBlocked((MessageX) m, Thread.currentThread().getId());
 		}
 
-		fc.reveiller();
+		fc.reveiller(((MessageX) m).getNbExemplaire());
 	}
 
 	@Override
@@ -121,24 +125,51 @@ public class ProdCons implements Tampon {
 	private class File{
 
 		private int residu;
+        private HashMap<MessageX, ArrayList<Long>> idBlocked;
 
 		public File(int residu){
 			this.residu = residu;
+            idBlocked = new HashMap<>();
 		}
 
-		public synchronized void attendre() throws InterruptedException {
-			while(residu == 0){
+		public synchronized void attendre(int nbExemplaire) throws InterruptedException {
+			while(residu == 0 || isBlocked()){
 				if(ProdCons.this.productionIsFinished()){
                     notify();
 					return;
 				}
 				wait();
 			}
-			residu--;
+            residu -= nbExemplaire;
 		}
-		public synchronized void reveiller() throws InterruptedException {
-			residu++;
-			notifyAll();
+
+		public synchronized void reveiller(int nbExemplaire) throws InterruptedException {
+            notifyAll();
+            residu += nbExemplaire;
 		}
+
+        public synchronized boolean isBlocked(){
+            boolean isBlocked = false;
+            for(ArrayList<Long> al : idBlocked.values()){
+                isBlocked = isBlocked || al.contains(Thread.currentThread().getId());
+            }
+            return isBlocked;
+        }
+
+        public void addBlocked(MessageX m, long id){
+            //LOGGER.info("\t\t\tAdd "+id+" for "+m.toString() + " " + m.isEmpty());
+            if (idBlocked.containsKey(m)) {
+                idBlocked.get(m).add(id);
+            } else {
+                ArrayList<Long> ids = new ArrayList<>();
+                ids.add(id);
+                idBlocked.put(m, ids);
+            }
+        }
+
+        public void removeBlocked(MessageX m){
+            //LOGGER.info("\t\t\tRemove "+m.toString());
+            idBlocked.remove(m);
+        }
 	}
 }

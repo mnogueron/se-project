@@ -43,15 +43,10 @@ public class TestProdCons extends Simulateur {
         prodCons = new ProdCons(nbBuffer, nbProd, this.observateur);
         consommateurs = new ArrayList<>();
         producteurs = new ArrayList<>();
-        
-        /* 
-         * added init(int nbProducteurs, int nbConsommateurs, int nbBuffers)
-         * for objective 3 
-        */
+
         try {
 			observateur.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -62,10 +57,6 @@ public class TestProdCons extends Simulateur {
 						tempsMoyenConsommation, deviationTempsMoyenConsommation, prodCons,
 						nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire);
 				consommateurs.add(c);
-				/*
-				 * added newConsommateur(Consommateur C)
-				 * for objective 3
-				 */
 				observateur.newConsommateur(c);
 			} catch (ControlException e) {
 				e.printStackTrace();
@@ -79,10 +70,6 @@ public class TestProdCons extends Simulateur {
 						tempsMoyenProduction, deviationTempsMoyenProduction, prodCons,
 						nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
 				producteurs.add(p);
-				/*
-				 * added newProducteur(Producteur P)
-				 * for objective 3
-				 */
 				observateur.newProducteur(p);
 			} catch (ControlException e) {
 				e.printStackTrace();
@@ -92,7 +79,6 @@ public class TestProdCons extends Simulateur {
 
 	@Override
 	protected void run() throws Exception {
-		// TODO Auto-generated method stub
 		for(Producteur p : producteurs){
 			p.start();
 		}
@@ -132,6 +118,11 @@ public class TestProdCons extends Simulateur {
     }
 
 	public static void main(String[] args){
+        if(args.length > 0){
+            if(!args[0].equals("-Ddebug=1")){
+                LogManager.getLogManager().reset();
+            }
+        }
         new TestProdCons(new Observateur()).start();
     }
 }

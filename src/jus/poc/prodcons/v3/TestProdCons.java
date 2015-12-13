@@ -132,6 +132,11 @@ public class TestProdCons extends Simulateur {
     }
 
 	public static void main(String[] args){
+        if(args.length > 0){
+            if(args[0].equals("-Ddebug=0")){
+                LogManager.getLogManager().reset();
+            }
+        }
         new TestProdCons(new Observateur()).start();
     }
 }

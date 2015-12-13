@@ -52,11 +52,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 				if(m == null && prodCons.productionIsFinished()){
 					break;
 				}
-				
-				/*
-				 * added consommationMessage(Consommateur C, Message M, int T)
-				 * for objective 3
-				 */
+
 				observateur.consommationMessage(this, m, moyenneTempsDeTraitement);
 			} catch (InterruptedException e) {
 				e.printStackTrace();

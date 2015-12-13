@@ -20,12 +20,19 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
     private int nbMessagesToAdd;
     private ProdCons prodCons;
 
+    private int moyenneNombreDeProduction;
+    private int deviationNombreDeProduction;
+
 	protected Producteur(int type, Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement,
                          ProdCons prodCons, int moyenneNombreDeProduction, int deviationNombreDeProduction)
 			throws ControlException {
 		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
         this.prodCons = prodCons;
+
+        this.moyenneNombreDeProduction = moyenneNombreDeProduction;
+        this.deviationNombreDeProduction = deviationNombreDeProduction;
         nbMessages = Aleatoire.valeur(moyenneNombreDeProduction, deviationNombreDeProduction);
+
         nbMessagesToAdd = nbMessages;
 	}
 
@@ -38,15 +45,14 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			MessageX m = new MessageX(Aleatoire.valeur(1000, 2000)+"");
+
+            /*
+                                add nbExemplaire for a message
+                            */
+			MessageX m = new MessageX(Aleatoire.valeur(1000, 2000)+"", Aleatoire.valeur(3, 3));
 			
 			try {
-				/*
-				 * added productionMessage(Producteur P, Message M, int T)
-				 * for objective 3
-				 */
 				observateur.productionMessage(this, m, moyenneTempsDeTraitement);
-				
 				prodCons.put(this, m);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -55,6 +61,7 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 			}
 			
 			nbMessages--;
+
         }
 		prodCons.setProductionFinished(this);
 		LOGGER.info("["+identification()+"] has finished.");
