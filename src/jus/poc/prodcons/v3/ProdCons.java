@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class ProdCons implements Tampon {
 	
-	private Logger logger = Logger.getLogger(ProdCons.class.getName());
+	private Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
 	
 	private Message[] buffer;
 	private int in;
@@ -32,11 +32,11 @@ public class ProdCons implements Tampon {
 	 * ProdCons constructor 
 	 * @param bufferSize
 	 */
-	public ProdCons(int bufferSize, int nbProd) {
-		observateur = new Observateur();
+	public ProdCons(int bufferSize, int nbProd, Observateur observateur) {
+		this.observateur = observateur;
 		in = 0;
 		out = 0;
-        logger.setLevel(Level.INFO);
+        LOGGER.setLevel(Level.INFO);
 		prodFinished = new ArrayList<>();
 		this.nbProd = nbProd;
 		buffer = new Message[bufferSize];
@@ -85,7 +85,7 @@ public class ProdCons implements Tampon {
 			
 			buffer[out] = null;
 			out = (out+1)%taille();
-			logger.info("Consommateur \t["+c.identification()+"] \tconsumes: \t\t"+ m);
+			LOGGER.info("[" + c.identification() + "] \tconsumes: \t\t" + m);
 		}
 
 		fp.reveiller();
@@ -107,7 +107,7 @@ public class ProdCons implements Tampon {
 			observateur.depotMessage(p, m);
 			
 			in = (in + 1) % taille();
-			logger.info("Producteur \t\t[" + p.identification() + "] \tproduces: \t\t" + m);
+			LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m);
 		}
 
 		fc.reveiller();

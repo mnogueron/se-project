@@ -1,6 +1,7 @@
 package jus.poc.prodcons.v3;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.Aleatoire;
@@ -12,6 +13,8 @@ import jus.poc.prodcons._Producteur;
  * Created by matthieu on 06/12/15.
  */
 public class Producteur extends Acteur implements _Producteur, Runnable {
+
+	private Logger LOGGER = Logger.getLogger(Producteur.class.getName());
 
 	private int nbMessages;
     private int nbMessagesToAdd;
@@ -28,6 +31,7 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 
 	@Override
 	public void run() {
+		LOGGER.info("["+identification()+"] is running...");
 		while(nbMessages > 0){
 			try {
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement)*100);
@@ -53,6 +57,7 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 			nbMessages--;
         }
 		prodCons.setProductionFinished(this);
+		LOGGER.info("["+identification()+"] has finished.");
 	}
 
 	@Override

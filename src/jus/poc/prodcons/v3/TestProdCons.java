@@ -2,6 +2,8 @@ package jus.poc.prodcons.v3;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.ControlException;
@@ -12,6 +14,8 @@ import jus.poc.prodcons.Simulateur;
  * Created by matthieu on 06/12/15.
  */
 public class TestProdCons extends Simulateur {
+
+    private Logger LOGGER = Logger.getLogger(TestProdCons.class.getName());
 
     private int nbProd;
     private int nbCons;
@@ -34,8 +38,9 @@ public class TestProdCons extends Simulateur {
 
 	public TestProdCons(Observateur observateur) {
 		super(observateur);
+        LOGGER.info("Initialize local variables");
         init("options.xml");
-        prodCons = new ProdCons(nbBuffer, nbProd);
+        prodCons = new ProdCons(nbBuffer, nbProd, this.observateur);
         consommateurs = new ArrayList<>();
         producteurs = new ArrayList<>();
         
@@ -49,10 +54,11 @@ public class TestProdCons extends Simulateur {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        
+
+        LOGGER.info("Create all Consommateur");
         for(int i = 0; i<nbCons; i++){
         	try {
-        		Consommateur c = new Consommateur(typeConsommateur, observateur,
+        		Consommateur c = new Consommateur(typeConsommateur, this.observateur,
 						tempsMoyenConsommation, deviationTempsMoyenConsommation, prodCons,
 						nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire);
 				consommateurs.add(c);
@@ -65,10 +71,11 @@ public class TestProdCons extends Simulateur {
 				e.printStackTrace();
 			}
         }
-        
+
+        LOGGER.info("Create all Producteur");
         for(int i = 0; i<nbProd; i++){
         	try {
-        		Producteur p = new Producteur(typeProducteur, observateur,
+        		Producteur p = new Producteur(typeProducteur, this.observateur,
 						tempsMoyenProduction, deviationTempsMoyenProduction, prodCons,
 						nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
 				producteurs.add(p);
@@ -85,7 +92,7 @@ public class TestProdCons extends Simulateur {
 
 	@Override
 	protected void run() throws Exception {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 		for(Producteur p : producteurs){
 			p.start();
 		}

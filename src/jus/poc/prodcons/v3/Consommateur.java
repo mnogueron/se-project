@@ -7,10 +7,15 @@ import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons._Consommateur;
 
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 /**
  * Created by matthieu on 06/12/15.
  */
 public class Consommateur extends Acteur implements _Consommateur, Runnable {
+
+	private Logger LOGGER = Logger.getLogger(Consommateur.class.getName());
 
 	private int nbMessages;
 	private ProdCons prodCons;
@@ -39,6 +44,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 
     @Override
     public void run() {
+		LOGGER.info("["+identification()+"] is running...");
     	Message m;
     	while(nbMessages > 0){
 			try {
@@ -64,7 +70,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 				e.printStackTrace();
 			}
     	}
-		System.out.println("OUT ["+identification()+"]");
+		LOGGER.info("[" + identification() + "] has finished.");
     }
 
     // number of messages already processed by the Consommateur
