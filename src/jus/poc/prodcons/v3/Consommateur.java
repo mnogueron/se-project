@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class Consommateur extends Acteur implements _Consommateur, Runnable {
 
-	private Logger LOGGER = Logger.getLogger(Consommateur.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Consommateur.class.getName());
 
 	private int nbMessages;
 	private ProdCons prodCons;

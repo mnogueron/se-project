@@ -51,7 +51,6 @@ public class TestProdCons extends Simulateur {
         try {
 			observateur.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -92,7 +91,6 @@ public class TestProdCons extends Simulateur {
 
 	@Override
 	protected void run() throws Exception {
-		// TODO Auto-generated method stub
 		for(Producteur p : producteurs){
 			p.start();
 		}

@@ -14,7 +14,7 @@ import jus.poc.prodcons._Producteur;
  */
 public class Producteur extends Acteur implements _Producteur, Runnable {
 
-	private Logger LOGGER = Logger.getLogger(Producteur.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Producteur.class.getName());
 
 	private int nbMessages;
     private int nbMessagesToAdd;

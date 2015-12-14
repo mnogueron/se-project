@@ -15,7 +15,7 @@ import jus.poc.prodcons.Simulateur;
  */
 public class TestProdCons extends Simulateur {
 
-    private Logger LOGGER = Logger.getLogger(TestProdCons.class.getName());
+    private static Logger LOGGER = Logger.getLogger(TestProdCons.class.getName());
 
     private int nbProd;
     private int nbCons;

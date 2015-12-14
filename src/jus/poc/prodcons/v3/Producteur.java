@@ -1,13 +1,8 @@
 package jus.poc.prodcons.v3;
 
-import java.util.Random;
-import java.util.logging.Logger;
+import jus.poc.prodcons.*;
 
-import jus.poc.prodcons.Acteur;
-import jus.poc.prodcons.Aleatoire;
-import jus.poc.prodcons.ControlException;
-import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons._Producteur;
+import java.util.logging.Logger;
 
 /**
  * Created by matthieu on 06/12/15.

@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class ProdCons implements Tampon {
 	
-	private Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
+	private static Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
 	
 	private Message[] buffer;
 	private int in;
@@ -36,7 +36,6 @@ public class ProdCons implements Tampon {
 		this.observateur = observateur;
 		in = 0;
 		out = 0;
-        LOGGER.setLevel(Level.INFO);
 		prodFinished = new ArrayList<>();
 		this.nbProd = nbProd;
 		buffer = new Message[bufferSize];

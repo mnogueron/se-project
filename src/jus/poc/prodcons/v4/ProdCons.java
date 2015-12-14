@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class ProdCons implements Tampon {
 	
-	private Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
+	private static Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
 	
 	private MessageX[] buffer;
 	private int in;

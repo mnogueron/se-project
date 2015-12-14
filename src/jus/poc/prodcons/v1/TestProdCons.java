@@ -2,6 +2,8 @@ package jus.poc.prodcons.v1;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.ControlException;
@@ -12,6 +14,8 @@ import jus.poc.prodcons.Simulateur;
  * Created by matthieu on 06/12/15.
  */
 public class TestProdCons extends Simulateur {
+
+    private Logger LOGGER = Logger.getLogger(TestProdCons.class.getName());
 
     private int nbProd;
     private int nbCons;
@@ -34,11 +38,13 @@ public class TestProdCons extends Simulateur {
 
 	public TestProdCons(Observateur observateur) {
 		super(observateur);
+        LOGGER.info("Initialize local variables");
         init("options.xml");
         prodCons = new ProdCons(nbBuffer, nbProd);
         consommateurs = new ArrayList<>();
         producteurs = new ArrayList<>();
-        
+
+        LOGGER.info("Create all Consommateur");
         for(int i = 0; i<nbCons; i++){
         	try {
 				consommateurs.add(new Consommateur(typeConsommateur, observateur,
@@ -48,7 +54,8 @@ public class TestProdCons extends Simulateur {
 				e.printStackTrace();
 			}
         }
-        
+
+        LOGGER.info("Create all Producteur");
         for(int i = 0; i<nbProd; i++){
         	try {
 				producteurs.add(new Producteur(typeProducteur, observateur,
@@ -62,7 +69,6 @@ public class TestProdCons extends Simulateur {
 
 	@Override
 	protected void run() throws Exception {
-		// TODO Auto-generated method stub		
 		for(Producteur p : producteurs){
 			p.start();
 		}
@@ -102,6 +108,11 @@ public class TestProdCons extends Simulateur {
     }
 
 	public static void main(String[] args){
+        if(args.length > 0){
+            if(args[0].equals("-Ddebug=0")){
+                LogManager.getLogManager().reset();
+            }
+        }
         new TestProdCons(new Observateur()).start();
     }
 }

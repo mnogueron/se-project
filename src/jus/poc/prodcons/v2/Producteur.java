@@ -1,17 +1,15 @@
 package jus.poc.prodcons.v2;
 
-import java.util.Random;
+import jus.poc.prodcons.*;
 
-import jus.poc.prodcons.Acteur;
-import jus.poc.prodcons.Aleatoire;
-import jus.poc.prodcons.ControlException;
-import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons._Producteur;
+import java.util.logging.Logger;
 
 /**
  * Created by matthieu on 06/12/15.
  */
 public class Producteur extends Acteur implements _Producteur, Runnable {
+
+	private Logger LOGGER = Logger.getLogger(Producteur.class.getName());
 
 	private int nbMessages;
     private int nbMessagesToAdd;
@@ -28,6 +26,7 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 
 	@Override
 	public void run() {
+        LOGGER.info("["+identification()+"] is running...");
 		while(nbMessages > 0){
 			try {
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement)*100);
@@ -43,6 +42,7 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 			nbMessages--;
         }
 		prodCons.setProductionFinished(this);
+        LOGGER.info("["+identification()+"] has finished.");
 	}
 
 	@Override

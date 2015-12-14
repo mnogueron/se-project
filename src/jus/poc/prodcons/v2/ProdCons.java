@@ -13,8 +13,8 @@ import java.util.logging.Logger;
  * Created by matthieu on 06/12/15.
  */
 public class ProdCons implements Tampon {
-	
-	private Logger logger = Logger.getLogger(ProdCons.class.getName());
+
+	private static Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
 	
 	private Message[] buffer;
 	private int in;
@@ -32,7 +32,6 @@ public class ProdCons implements Tampon {
 	public ProdCons(int bufferSize, int nbProd) {
 		in = 0;
 		out = 0;
-        logger.setLevel(Level.INFO);
 		prodFinished = new ArrayList<>();
 		this.nbProd = nbProd;
 		buffer = new Message[bufferSize];
@@ -48,7 +47,7 @@ public class ProdCons implements Tampon {
 	}
 	
 	public synchronized boolean productionIsFinished(){
-		return prodFinished.size() == nbProd;
+		return prodFinished.size() == nbProd && enAttente() == 0;
 	}
 
 	@Override
@@ -65,16 +64,16 @@ public class ProdCons implements Tampon {
 	@Override
 	public Message get(_Consommateur c) throws InterruptedException {
 		fc.attendre();
-        if (productionIsFinished() && enAttente() == 0) {
-            return null;
-        }
+		if (productionIsFinished()) {
+			return null;
+		}
 
 		Message m;
 		synchronized (this){
 			m = buffer[out];
 			buffer[out] = null;
 			out = (out+1)%taille();
-			logger.info("Consommateur \t["+c.identification()+"] \tconsumes: \t\t"+ m);
+			LOGGER.info("[" + c.identification() + "] \tconsumes: \t\t" + m);
 		}
 
 		fp.reveiller();
@@ -89,7 +88,7 @@ public class ProdCons implements Tampon {
 		synchronized (this) {
 			buffer[in] = m;
 			in = (in + 1) % taille();
-			logger.info("Producteur \t\t[" + p.identification() + "] \tproduces: \t\t" + m);
+			LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m);
 		}
 
 		fc.reveiller();
@@ -110,8 +109,8 @@ public class ProdCons implements Tampon {
 
 		public synchronized void attendre() throws InterruptedException {
 			while(residu == 0){
-				if(ProdCons.this.productionIsFinished() && ProdCons.this.enAttente() == 0){
-                    notify();
+				if(ProdCons.this.productionIsFinished()){
+					notify();
 					return;
 				}
 				wait();
