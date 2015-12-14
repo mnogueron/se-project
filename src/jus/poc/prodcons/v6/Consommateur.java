@@ -1,20 +1,18 @@
 package jus.poc.prodcons.v6;
 
 import jus.poc.prodcons.*;
-import jus.poc.prodcons.v5.ProdCons;
-import jus.poc.prodcons.v5.TestProdCons;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static jus.poc.prodcons.v5.TestProdCons.AnsiColor;
+import static jus.poc.prodcons.v6.TestProdCons.AnsiColor;
 
 /**
  * Created by matthieu on 06/12/15.
  */
 public class Consommateur extends Acteur implements _Consommateur, Runnable {
 
-	private static Logger LOGGER = Logger.getLogger(jus.poc.prodcons.v5.Consommateur.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Consommateur.class.getName());
 
 	public static void initLogger(){
 		LOGGER.setUseParentHandlers(false);
@@ -37,7 +35,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 	 * @throws ControlException
 	 */
 	protected Consommateur(int type, Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement,
-			ProdCons prodCons, int moyenneNbExemplaires, int deviationNbExemplaires)
+						   ProdCons prodCons, int moyenneNbExemplaires, int deviationNbExemplaires)
 			throws ControlException {
 		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.prodCons = prodCons;

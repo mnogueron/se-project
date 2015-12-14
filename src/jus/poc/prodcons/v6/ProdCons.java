@@ -6,7 +6,6 @@ import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
-import jus.poc.prodcons.v5.Producteur;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Condition;
@@ -15,18 +14,18 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static jus.poc.prodcons.v5.TestProdCons.AnsiColor;
+import static jus.poc.prodcons.v6.TestProdCons.AnsiColor;
 
 /**
  * Created by matthieu on 06/12/15.
  */
 public class ProdCons implements Tampon {
 
-	private static Logger LOGGER = Logger.getLogger(jus.poc.prodcons.v5.ProdCons.class.getName());
+	private static Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
 
 	public static void initLogger(){
 		LOGGER.setUseParentHandlers(false);
-		LOGGER.addHandler(new jus.poc.prodcons.v6.TestProdCons.LogConsoleHandler());
+		LOGGER.addHandler(new TestProdCons.LogConsoleHandler());
 	}
 	
 	private Message[] buffer;
@@ -35,7 +34,7 @@ public class ProdCons implements Tampon {
 	
 	private int nbProd;
 	// changed ArrayList to CopyOnWriteArrayList which is thread-safe
-	private CopyOnWriteArrayList<jus.poc.prodcons.v5.Producteur> prodFinished;
+	private CopyOnWriteArrayList<Producteur> prodFinished;
 
 	private Observateur observateur;
 

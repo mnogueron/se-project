@@ -7,9 +7,6 @@ import java.util.logging.*;
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Simulateur;
-import jus.poc.prodcons.v5.Consommateur;
-import jus.poc.prodcons.v5.ProdCons;
-import jus.poc.prodcons.v5.Producteur;
 
 /**
  * Created by matthieu on 06/12/15.
@@ -62,10 +59,10 @@ public class TestProdCons extends Simulateur {
     private int nombreMoyenNbExemplaire;
     private int deviationNombreMoyenNbExemplaire;
     
-    private ArrayList<jus.poc.prodcons.v6.Consommateur> consommateurs;
-    private ArrayList<jus.poc.prodcons.v6.Producteur> producteurs;
+    private ArrayList<Consommateur> consommateurs;
+    private ArrayList<Producteur> producteurs;
 
-    private jus.poc.prodcons.v6.ProdCons prodCons;
+    private ProdCons prodCons;
     private int typeConsommateur = 2;
     private int typeProducteur = 1;
 
@@ -74,7 +71,7 @@ public class TestProdCons extends Simulateur {
         LOGGER.log(Level.INFO, "{0}Initialize local variables{1}",
                 new Object[]{AnsiColor.GREEN, AnsiColor.RESET});
         init("options.xml");
-        prodCons = new jus.poc.prodcons.v6.ProdCons(nbBuffer, nbProd, this.observateur);
+        prodCons = new ProdCons(nbBuffer, nbProd, this.observateur);
         consommateurs = new ArrayList<>();
         producteurs = new ArrayList<>();
 
@@ -92,7 +89,7 @@ public class TestProdCons extends Simulateur {
                 new Object[]{AnsiColor.GREEN, AnsiColor.RESET});
         for(int i = 0; i<nbCons; i++){
         	try {
-        		jus.poc.prodcons.v6.Consommateur c = new jus.poc.prodcons.v6.Consommateur(typeConsommateur, this.observateur,
+        		Consommateur c = new Consommateur(typeConsommateur, this.observateur,
 						tempsMoyenConsommation, deviationTempsMoyenConsommation, prodCons,
 						nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire);
 				consommateurs.add(c);
@@ -110,7 +107,7 @@ public class TestProdCons extends Simulateur {
                 new Object[]{AnsiColor.GREEN, AnsiColor.RESET});
         for(int i = 0; i<nbProd; i++){
         	try {
-        		jus.poc.prodcons.v6.Producteur p = new jus.poc.prodcons.v6.Producteur(typeProducteur, this.observateur,
+        		Producteur p = new Producteur(typeProducteur, this.observateur,
 						tempsMoyenProduction, deviationTempsMoyenProduction, prodCons,
 						nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
 				producteurs.add(p);
@@ -127,10 +124,10 @@ public class TestProdCons extends Simulateur {
 
 	@Override
 	protected void run() throws Exception {
-		for(jus.poc.prodcons.v6.Producteur p : producteurs){
+		for(Producteur p : producteurs){
 			p.start();
 		}
-		for(jus.poc.prodcons.v6.Consommateur c : consommateurs){
+		for(Consommateur c : consommateurs){
 			c.start();
 		}
 	}
@@ -179,7 +176,7 @@ public class TestProdCons extends Simulateur {
                 LogManager.getLogManager().reset();
             }
         }
-        new jus.poc.prodcons.v5.TestProdCons(new Observateur()).start();
+        new TestProdCons(new Observateur()).start();
     }
 
     public static class LogConsoleHandler extends Handler {
