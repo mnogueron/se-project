@@ -36,8 +36,8 @@ public class ProdCons implements Tampon {
 	// Create a new lock for objective 5
 	private Lock lock = new ReentrantLock();
 	// Create 2 conditions for objective 5
-	private final Condition isEmpty = lock.newCondition();
-	private final Condition isFull = lock.newCondition();
+	private final Condition notEmpty = lock.newCondition();
+	private final Condition notFull = lock.newCondition();
 	
 	/**
 	 * ProdCons constructor 
@@ -94,12 +94,12 @@ public class ProdCons implements Tampon {
         
         try{
 	        while(count == 0){
-	        	// signal all isEmpty if productionIsFinished
+	        	// signal all notEmpty if productionIsFinished
 	        	if(productionIsFinished()){
-	        		isEmpty.signalAll();
+	        		notEmpty.signalAll();
 	        		return null;
 	        	}
-	        	isEmpty.await();
+	        	notEmpty.await();
 	        }
 	        
 			m = buffer[out];
@@ -117,7 +117,7 @@ public class ProdCons implements Tampon {
 			LOGGER.info("[" + c.identification() + "] \tconsumes: \t\t" + m);
 			
 			// notifies the producer that there is space available in the buffer
-			isFull.signal();
+			notFull.signal();
         }
         finally{
 			lock.unlock();
@@ -133,7 +133,7 @@ public class ProdCons implements Tampon {
 		
 		try{
 			while(count == taille()){
-				isFull.await();
+				notFull.await();
 			}
 			
 			buffer[in] = m;
@@ -150,7 +150,7 @@ public class ProdCons implements Tampon {
 			LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m);
 			
 			// notifies the consumer that data is available to read
-			isEmpty.signal();
+			notEmpty.signal();
 		}
 		finally{
 			lock.unlock();
