@@ -125,11 +125,11 @@ public class ProdCons implements Tampon {
 	private class File{
 
 		private int residu;
-        private HashMap<MessageX, ArrayList<Long>> idBlocked;
+        private ConcurrentHashMap<MessageX, ArrayList<Long>> idBlocked;
 
 		public File(int residu){
 			this.residu = residu;
-            idBlocked = new HashMap<>();
+            idBlocked = new ConcurrentHashMap<>();
 		}
 
 		public synchronized void attendre(int nbExemplaire) throws InterruptedException {
@@ -148,7 +148,7 @@ public class ProdCons implements Tampon {
             residu += nbExemplaire;
 		}
 
-        public synchronized boolean isBlocked(){
+        public boolean isBlocked(){
             boolean isBlocked = false;
             for(ArrayList<Long> al : idBlocked.values()){
                 isBlocked = isBlocked || al.contains(Thread.currentThread().getId());
