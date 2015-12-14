@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: ProdCons.jar
+Main-Class: jus.poc.prodcons.v2.TestProdCons
+
