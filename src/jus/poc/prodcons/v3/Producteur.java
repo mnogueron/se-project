@@ -2,14 +2,22 @@ package jus.poc.prodcons.v3;
 
 import jus.poc.prodcons.*;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static jus.poc.prodcons.v3.TestProdCons.AnsiColor;
 
 /**
  * Created by matthieu on 06/12/15.
  */
 public class Producteur extends Acteur implements _Producteur, Runnable {
 
-	private Logger LOGGER = Logger.getLogger(Producteur.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Producteur.class.getName());
+
+	public static void initLogger(){
+		LOGGER.setUseParentHandlers(false);
+		LOGGER.addHandler(new TestProdCons.LogConsoleHandler());
+	}
 
 	private int nbMessages;
     private int nbMessagesToAdd;
@@ -26,7 +34,8 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 
 	@Override
 	public void run() {
-		LOGGER.info("["+identification()+"] is running...");
+		LOGGER.log(Level.INFO, "{0}[{1}] is running...{2}",
+				new Object[]{AnsiColor.GREEN, identification(), AnsiColor.RESET});
 		while(nbMessages > 0){
 			try {
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement)*100);
@@ -52,7 +61,8 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 			nbMessages--;
         }
 		prodCons.setProductionFinished(this);
-		LOGGER.info("["+identification()+"] has finished.");
+		LOGGER.log(Level.INFO, "{0}[{1}] has finished.{2}",
+				new Object[]{AnsiColor.GREEN, identification(), AnsiColor.RESET});
 	}
 
 	@Override

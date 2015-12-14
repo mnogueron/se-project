@@ -7,7 +7,6 @@ import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
 
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -15,12 +14,19 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static jus.poc.prodcons.v5.TestProdCons.AnsiColor;
+
 /**
  * Created by matthieu on 06/12/15.
  */
 public class ProdCons implements Tampon {
-	
-	private Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
+
+	private static Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
+
+	public static void initLogger(){
+		LOGGER.setUseParentHandlers(false);
+		LOGGER.addHandler(new TestProdCons.LogConsoleHandler());
+	}
 	
 	private Message[] buffer;
 	private int in;
@@ -49,7 +55,6 @@ public class ProdCons implements Tampon {
 		this.observateur = observateur;
 		in = 0;
 		out = 0;
-        LOGGER.setLevel(Level.INFO);
 		prodFinished = new CopyOnWriteArrayList<>();
 		this.nbProd = nbProd;
 		buffer = new Message[bufferSize];
@@ -113,8 +118,9 @@ public class ProdCons implements Tampon {
 			buffer[out] = null;
 			out = (out+1)%taille();
 			count--;
-			
-			LOGGER.info("[" + c.identification() + "] \tconsumes: \t\t" + m);
+
+			LOGGER.log(Level.INFO, "{0}[{1}] \tconsumes: \t\t{2}{3}",
+					new Object[]{AnsiColor.CYAN, c.identification(), m, AnsiColor.RESET});
 			
 			// notifies the producer that there is space available in the buffer
 			notFull.signal();
@@ -146,8 +152,9 @@ public class ProdCons implements Tampon {
 			
 			in = (in + 1) % taille();
 			count++;
-			
-			LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m);
+
+			LOGGER.log(Level.INFO, "{0}[{1}] \tproduces: \t\t{2}{3}",
+					new Object[]{AnsiColor.PURPLE, p.identification(), m, AnsiColor.RESET});
 			
 			// notifies the consumer that data is available to read
 			notEmpty.signal();

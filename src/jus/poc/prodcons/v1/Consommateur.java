@@ -7,14 +7,22 @@ import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons._Consommateur;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static jus.poc.prodcons.v1.TestProdCons.AnsiColor;
 
 /**
  * Created by matthieu on 06/12/15.
  */
 public class Consommateur extends Acteur implements _Consommateur, Runnable {
 
-	private static Logger LOGGER = Logger.getLogger(Consommateur.class.getName());
+    private static Logger LOGGER = Logger.getLogger(Consommateur.class.getName());
+
+    public static void initLogger(){
+        LOGGER.setUseParentHandlers(false);
+        LOGGER.addHandler(new TestProdCons.LogConsoleHandler());
+    }
 
 	private int nbMessages;
 	private ProdCons prodCons;
@@ -43,7 +51,8 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 
     @Override
     public void run() {
-        LOGGER.info("["+identification()+"] is running...");
+        LOGGER.log(Level.INFO, "{0}[{1}] is running...{2}",
+                new Object[]{AnsiColor.GREEN, identification(), AnsiColor.RESET});
     	Message m;
     	while(nbMessages > 0){
     		m = prodCons.get(this);
@@ -57,7 +66,8 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 				e.printStackTrace();
 			}
 		}
-        LOGGER.info("[" + identification() + "] has finished.");
+        LOGGER.log(Level.INFO, "{0}[{1}] has finished.{2}",
+                new Object[]{AnsiColor.GREEN, identification(), AnsiColor.RESET});
     }
 
     // number of messages already processed by the Consommateur

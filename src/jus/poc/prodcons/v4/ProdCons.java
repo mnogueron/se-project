@@ -8,10 +8,11 @@ import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static jus.poc.prodcons.v4.TestProdCons.AnsiColor;
 
 /**
  * Created by matthieu on 06/12/15.
@@ -19,6 +20,11 @@ import java.util.logging.Logger;
 public class ProdCons implements Tampon {
 	
 	private static Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
+
+    public static void initLogger(){
+        LOGGER.setUseParentHandlers(false);
+        LOGGER.addHandler(new TestProdCons.LogConsoleHandler());
+    }
 	
 	private MessageX[] buffer;
 	private int in;
@@ -38,7 +44,6 @@ public class ProdCons implements Tampon {
 		this.observateur = observateur;
 		in = 0;
 		out = 0;
-        LOGGER.setLevel(Level.INFO);
 		prodFinished = new ArrayList<>();
 		this.nbProd = nbProd;
 		buffer = new MessageX[bufferSize];
@@ -94,7 +99,8 @@ public class ProdCons implements Tampon {
                 fc.addBlocked(m, Thread.currentThread().getId());
             }
 
-			LOGGER.info("[" + c.identification() + "] \tconsumes: \t\t" + m);
+			LOGGER.log(Level.INFO, "{0}[{1}] \tconsumes: \t\t{2}{3}",
+                    new Object[]{AnsiColor.CYAN, c.identification(), m, AnsiColor.RESET});
 		}
 
         fp.reveiller(1);
@@ -110,7 +116,9 @@ public class ProdCons implements Tampon {
 			observateur.depotMessage(p, m);
 			
 			in = (in + 1) % taille();
-            LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m + "   \t[" + ((MessageX) m).getNbExemplaire() + "]");
+            LOGGER.log(Level.INFO, "{0}[{1}] \tproduces: \t\t{2}   \t[{3}]{4}",
+                    new Object[]{AnsiColor.PURPLE, p.identification(), m, ((MessageX) m).getNbExemplaire(),
+                            AnsiColor.RESET});
             fp.addBlocked((MessageX) m, Thread.currentThread().getId());
 		}
 

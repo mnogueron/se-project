@@ -9,12 +9,19 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static jus.poc.prodcons.v2.TestProdCons.AnsiColor;
+
 /**
  * Created by matthieu on 06/12/15.
  */
 public class ProdCons implements Tampon {
 
 	private static Logger LOGGER = Logger.getLogger(ProdCons.class.getName());
+
+	public static void initLogger(){
+		LOGGER.setUseParentHandlers(false);
+		LOGGER.addHandler(new TestProdCons.LogConsoleHandler());
+	}
 	
 	private Message[] buffer;
 	private int in;
@@ -73,7 +80,8 @@ public class ProdCons implements Tampon {
 			m = buffer[out];
 			buffer[out] = null;
 			out = (out+1)%taille();
-			LOGGER.info("[" + c.identification() + "] \tconsumes: \t\t" + m);
+			LOGGER.log(Level.INFO, "{0}[{1}] \tconsumes: \t\t{2}{3}",
+					new Object[]{AnsiColor.CYAN, c.identification(), m, AnsiColor.RESET});
 		}
 
 		fp.reveiller();
@@ -88,7 +96,8 @@ public class ProdCons implements Tampon {
 		synchronized (this) {
 			buffer[in] = m;
 			in = (in + 1) % taille();
-			LOGGER.info("[" + p.identification() + "] \tproduces: \t\t" + m);
+			LOGGER.log(Level.INFO, "{0}[{1}] \tproduces: \t\t{2}{3}",
+					new Object[]{AnsiColor.PURPLE, p.identification(), m, AnsiColor.RESET});
 		}
 
 		fc.reveiller();
