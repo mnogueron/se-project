@@ -3,11 +3,7 @@ package jus.poc.prodcons.v6;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jus.poc.prodcons.Acteur;
-import jus.poc.prodcons.Aleatoire;
-import jus.poc.prodcons.ControlException;
-import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.*;
 
 import static jus.poc.prodcons.v6.TestProdCons.AnsiColor;
 
@@ -46,7 +42,7 @@ public class Producteur extends Acteur implements _Producteur, Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			jus.poc.prodcons.v6.MessageX m = new jus.poc.prodcons.v6.MessageX(Aleatoire.valeur(1000, 2000)+"");
+			MessageX m = new MessageX(Aleatoire.valeur(1000, 2000)+"");
 			
 			try {
 				/*

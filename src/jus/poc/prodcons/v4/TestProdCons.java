@@ -72,7 +72,7 @@ public class TestProdCons extends Simulateur {
         LOGGER.log(Level.INFO, "{0}Initialize local variables{1}",
                 new Object[]{AnsiColor.GREEN, AnsiColor.RESET});
         init("options.xml");
-        prodCons = new ProdCons(nbBuffer, nbProd, this.observateur);
+        prodCons = new ProdCons(nbBuffer, nbProd, nbCons, this.observateur);
         consommateurs = new ArrayList<>();
         producteurs = new ArrayList<>();
 

@@ -1,11 +1,6 @@
 package jus.poc.prodcons.v4;
 
-import jus.poc.prodcons.ControlException;
-import jus.poc.prodcons.Message;
-import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons.Tampon;
-import jus.poc.prodcons._Consommateur;
-import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.*;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,7 +26,10 @@ public class ProdCons implements Tampon {
 	private int out;
 	
 	private int nbProd;
+	private int nbCons;
+
 	private ArrayList<Producteur> prodFinished;
+	private ArrayList<Consommateur> consFinished;
 
 	private File fp, fc;
 	private Observateur observateur;
@@ -40,12 +38,17 @@ public class ProdCons implements Tampon {
 	 * ProdCons constructor 
 	 * @param bufferSize
 	 */
-	public ProdCons(int bufferSize, int nbProd, Observateur observateur) {
+	public ProdCons(int bufferSize, int nbProd, int nbCons, Observateur observateur) {
 		this.observateur = observateur;
 		in = 0;
 		out = 0;
+
 		prodFinished = new ArrayList<>();
+		consFinished = new ArrayList<>();
+
 		this.nbProd = nbProd;
+		this.nbCons = nbCons;
+
 		buffer = new MessageX[bufferSize];
 		for(int i=0; i<taille(); i++){
 			buffer[i] = null;
@@ -54,12 +57,40 @@ public class ProdCons implements Tampon {
 		fc = new File(enAttente());
 	}
 	
-	public synchronized void setProductionFinished(Producteur p){
-		prodFinished.add(p);
+	public void setProductionFinished(Producteur p){
+		synchronized (this) {
+			prodFinished.add(p);
+		}
+
+		if(productionIsFinished()){
+			try {
+				fc.reveiller(0);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-	
+
+	public void setConsommationFinished(Consommateur c){
+		synchronized (this){
+			consFinished.add(c);
+		}
+
+        if(consommationIsFinished()){
+			try {
+				fp.reveiller(0);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public synchronized boolean productionIsFinished(){
 		return prodFinished.size() == nbProd && enAttente() == 0;
+	}
+
+	public synchronized boolean consommationIsFinished(){
+		return consFinished.size() == nbCons;
 	}
 
 	@Override
@@ -78,6 +109,7 @@ public class ProdCons implements Tampon {
 		fc.attendre(1);
 
         if (productionIsFinished()) {
+            fc.reveiller(0);
             return null;
         }
 
@@ -86,9 +118,9 @@ public class ProdCons implements Tampon {
 			m = buffer[out];
             m.removeExemplaire(1);
 
-			if(m.isEmpty()) {
-				observateur.retraitMessage(c, m);
+			observateur.retraitMessage(c, m);
 
+			if(m.isEmpty()) {
 				buffer[out] = null;
 				out = (out + 1) % taille();
 
@@ -111,15 +143,23 @@ public class ProdCons implements Tampon {
 	public void put(_Producteur p, Message m) throws InterruptedException, ControlException {
 		fp.attendre(((MessageX)m).getNbExemplaire());
 
+        if(consommationIsFinished()){
+            fp.reveiller(0);
+            return;
+        }
+
 		synchronized (this) {
 			buffer[in] = (MessageX)m;
-			observateur.depotMessage(p, m);
+
+			for(int i=0; i<((MessageX) m).getNbExemplaire(); i++){
+				observateur.depotMessage(p, m);
+			}
 			
 			in = (in + 1) % taille();
             LOGGER.log(Level.INFO, "{0}[{1}] \tproduces: \t\t{2}   \t[{3}]{4}",
                     new Object[]{AnsiColor.PURPLE, p.identification(), m, ((MessageX) m).getNbExemplaire(),
                             AnsiColor.RESET});
-            fp.addBlocked((MessageX) m, Thread.currentThread().getId());
+			fp.addBlocked((MessageX) m, Thread.currentThread().getId());
 		}
 
 		fc.reveiller(((MessageX) m).getNbExemplaire());
@@ -142,8 +182,8 @@ public class ProdCons implements Tampon {
 
 		public synchronized void attendre(int nbExemplaire) throws InterruptedException {
 			while(residu == 0 || isBlocked()){
-				if(ProdCons.this.productionIsFinished()){
-                    notify();
+                if(ProdCons.this.productionIsFinished() || ProdCons.this.consommationIsFinished()){
+                    notifyAll();
 					return;
 				}
 				wait();

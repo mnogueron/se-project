@@ -69,6 +69,7 @@ public class Consommateur extends Acteur implements _Consommateur, Runnable {
 				e.printStackTrace();
 			}
     	}
+		prodCons.setConsommationFinished(this);
         LOGGER.log(Level.INFO, "{0}[{1}] has finished.{2}",
                 new Object[]{AnsiColor.GREEN, identification(), AnsiColor.RESET});
     }

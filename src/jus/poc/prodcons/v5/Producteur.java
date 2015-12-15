@@ -4,11 +4,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jus.poc.prodcons.Acteur;
-import jus.poc.prodcons.Aleatoire;
-import jus.poc.prodcons.ControlException;
-import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.*;
 
 import static jus.poc.prodcons.v5.TestProdCons.AnsiColor;
 
